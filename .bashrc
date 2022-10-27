@@ -1,3 +1,9 @@
+# This is a config file for bash
+# Note: after writing an alias in this file, type:
+#				(1) 'chmod 700 ~/.bashrc'
+#				(2) './bashrc'
+#				(3) 'source ./bashrc'
+
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
@@ -122,16 +128,16 @@ export SDKMAN_DIR="$HOME/.sdkman"
 . "$HOME/.cargo/env"
 
 # Alias that updates and cleans entire system.
-alias up='sudo apt-get update && sudo apt-get upgrade && sudo apt-get autoremove && flatpak update'
+alias up='sudo apt-get update && sudo apt-get upgrade && sudo apt-get autoremove && sudo apt-get clean && flatpak update'
 
 # Automatically goes to programs in Data Structures CS2124 directory.
 alias ds="cd Desktop/'Undergrad Courses'/'Summer 2022'/'Data Structures'/Programs"
 
 # Suppresses annoying errors because of those fucking depracated keys or whatever, fuck miktex and their stupid fucking non gpg keys.
-function open() {
+# function open() {
 
-   gnome-open . &>/dev/null
-}
+  # gnome-open . &>/dev/null
+# }
 
 # This will automatically take you to the vim directory because it's a pain in the fucking ass
 # to get there, seriously. I'm trying to script all of these plugins and it's driving me nuts how
@@ -149,8 +155,9 @@ alias day="gsettings set org.gnome.settings-daemon.plugins.color night-light-ena
 # Simple command to change terminal theme at anytime
 alias theme='bash -c "$(wget -qO- https://git.io/vQgMr)"'
 
-# Command that takes me to fall 2022 semester
-alias fall2022="cd /Desktop/'Undergrad Courses'/'Fall 2022'"
+# Commands that takes me to the Fall 2022 directory and/or specific courses of the directory
+alias fallsys='cd /Desktop/Systems_Programming/'
+
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -158,3 +165,126 @@ export NVM_DIR="$HOME/.nvm"
 
 # Command that opens the tor browser.
 alias tor='flatpak run com.github.micahflee.torbrowser-launcher'
+
+# a modified list comand
+alias ls='ls -larth --color --group-directories-first'
+
+# Lists the permissions of a file
+alias per='ls -al $1'
+
+# Connects to the utsa vpn
+alias utsavpn='ssh ide709@10.100.240.203'
+utsa_vpn() {
+	read -p "Enter server (201 - 204): " server_name;
+	connect_to_vpn="ssh ide709@10.100.240.$server_name"
+	let server_name_comparison=$(($server_name >= 201 && $server_name <= 204))
+	if [ ~$server_name_comparison ]; then
+		echo "Invalid server name, try again."
+		return;
+	else
+		$connect_to_vpn;
+		exit 1;
+	fi
+
+	exit 0;
+}
+
+# Compiles any project with JavaFX
+javafx_compile(){
+	read -p "Enter file name: " file_name;
+
+	compile="javac --module-path $PATH_TO_FX $file_name"
+	execute="java --module-path $PATH_TO_FX $file_name"
+
+	$compile;
+
+	read -p "Execute? (Y/n): " decision;
+	case "$decision" in
+		'Y')
+			$execute
+			return 0;
+			;;
+		'n')
+			echo "Not executing."
+			return 0;
+			;;
+		*)
+			echo "Invalid input."
+			return -1; # User did not write the correct input.
+			;;
+		esac
+	return 0;
+
+}
+
+# We'll have to create an inventory system lmao.
+
+
+# adding ti_nspire_cx folders to PATH environment variable.
+# it's a tool chain build script.
+
+# fancy startup terminal screen
+# neofetch;
+# printf "UTSA Computer Science and Mathematics, Fall 2022\n"
+# printf "$(date)\n"
+# printf "Remember Ryan, to undo a tab in chrome is Ctrl+Shift+T\n"
+# figlet -cl "UTSA CS"
+
+# setting the java environment variable
+export JAVA_HOME=/usr/lib/jvm/jdk1.8.0_341/
+export PATH=$JAVA_HOME/bin:$PATH
+
+# this finds specific books
+alias comporg="open ~/Desktop/Computer_Systems_a_Programmers_Perspective.pdf"
+
+# slight mod to the cd command, it lists all the files after changing dirs
+cdd() {
+    cd $1 && ls
+}
+
+# takes you to a specific dir for undergrad courses fall 2022
+fall2022(){
+	printf "Which course?\n"
+	printf "[1] Anaysis of Algorithms\n"
+	printf "[2] Application Programming\n"
+	printf "[3] Systems Programming\n"
+	printf "[4] Computer Organization\n"
+	read USER_COURSE;
+
+	case $USER_COURSE in
+		1)
+			cd Desktop/Fall_2022/Analysis_of_Algorithms/ && ls
+			;;
+		2)
+			cd Desktop/Fall_2022/Application_Programming/ && ls
+			;;
+		3)
+			cd Desktop/Fall_2022/Systems_Programming/ && ls
+			;;
+		4)
+			cd Desktop/Fall_2022/Computer_Organization/ && ls
+			;;
+		*)
+			printf "Invalid input, must be 1 - 4\n"
+			;;
+		esac
+}
+
+# a small alias needed for assignment 3 for systems programming fall 2022
+alias lsa="\ls -la --time-style='+%Y-%m-%d %H:%M:%S'"
+
+# command that shows selection for books and automatically opens whichever one is picked
+# each book is assigned a specific key
+books() {
+    # cd Desktop/books/ && ls -al
+    LIST_COUNT=0  
+
+    for file in ~/Desktop/books/* 
+    do
+        echo "Processing $file" # always double quote "$f" filename
+        LIST_COUNT=$((LIST_COUNT+=1)) 
+    done
+    
+    BOOK_LIST[$((LIST_COUNT))]
+
+}
