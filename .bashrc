@@ -176,17 +176,14 @@ alias per='ls -al $1'
 alias utsavpn='ssh ide709@10.100.240.203'
 utsa_vpn() {
 	read -p "Enter server (201 - 204): " server_name;
-	connect_to_vpn="ssh ide709@10.100.240.$server_name"
-	let server_name_comparison=$(($server_name >= 201 && $server_name <= 204))
-	if [ ~$server_name_comparison ]; then
-		echo "Invalid server name, try again."
-		return;
-	else
-		$connect_to_vpn;
-		exit 1;
-	fi
-
-	exit 0;
+    if (( $((server_name > 204)) || $((server_name <= 200)) ))
+    then
+        printf "Invalid server name, try again\n";
+        return;
+    else
+        ssh ide709@10.100.240.$server_name
+        return;
+    fi
 }
 
 # Compiles any project with JavaFX
